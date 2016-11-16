@@ -1,0 +1,175 @@
+ext {
+  Versions = [
+    // Build
+    'checkstyle'            : '6.17',
+    'jacoco'                : '0.7.5.201505241946',
+
+    // Core
+    'spring-framework'      : '4.3.1.RELEASE',
+    'spring-security'       : '4.1.1.RELEASE',
+    'spring-data-jpa'       : '1.9.4.RELEASE',
+    'spring-batch'          : '3.0.6.RELEASE',
+    'spring-boot'           : '1.3.3.RELEASE',
+    'javax.transaction-api' : '1.2',
+    'hibernate'             : '4.3.11.Final',
+    'hibernate-validator'   : '5.2.1.Final',
+    'slf4j'                 : '1.7.16',
+    'log4j'                 : '1.2.16',
+    'commons-lang3'         : '3.3.2',
+    'jackson'               : '2.4.4',
+    'jsonpath'              : '0.8.1',
+    'postgresql'            : '9.3-1100-jdbc41',
+    'hsqldb'                : '2.3.2',
+    'guava'                 : '19.0',
+    'lombok'                : '1.16.8',
+    'findbugs'              : '3.0.0',
+    'logback'               : '1.1.3',
+    'javax.servlet-api'     : '3.0.1',
+    'mysql'                 : '5.1.38',
+    'akka'                  : '2.4.12',
+    
+    // Test
+    'mockito'               : '1.10.19',
+    'junit'                 : '4.12',
+    'h2'                    : '1.3.170',
+    'jsonpath'              : '0.8.1',
+    'jbehave'               : '4.0.4',
+    'assertj'               : '3.3.0',
+    'akka-inmemory'         : '1.3.0',
+    'javax.el'              : '3.0.0'
+  ]
+}
+
+buildscript {
+  ext {
+    Versions = [
+      'spring-boot'           : '1.3.3.RELEASE',
+      'gradle-node'           : '0.13',
+      'gradle-gulp'           : '0.11'
+    ]
+  }
+  repositories {
+    mavenCentral()
+    jcenter()
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${Versions.'spring-boot'}")
+    classpath("com.moowork.gradle:gradle-node-plugin:${Versions.'gradle-node'}")
+    classpath group: 'com.moowork.gradle', name: 'gradle-gulp-plugin', version: Versions.'gradle-gulp'
+  }
+}
+
+  apply plugin: 'java'
+  apply plugin: 'jacoco'
+  apply plugin: 'eclipse'
+  apply plugin: 'checkstyle'
+  apply plugin: 'findbugs'
+  apply plugin: 'maven'
+
+  group = 'net.chh'
+
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+
+  configurations { checkstyleConfig }
+
+  dependencies {
+    checkstyleConfig ("com.puppycrawl.tools:checkstyle:${Versions.checkstyle}") { transitive = false }
+  }
+
+  checkstyle {
+    toolVersion = "${Versions.'checkstyle'}"
+    config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
+  }
+
+  // Fail Checkstyle on warning.
+  tasks.withType(Checkstyle).each { checkstyleTask ->
+    checkstyleTask.doLast {
+      reports.all { report ->
+        def outputFile = report.destination
+        if (outputFile.exists() && outputFile.text.contains("<error ")) {
+          outputs.upToDateWhen { false }
+          throw new GradleException("There were checkstyle warnings! For more info check $outputFile")
+        }
+      }
+    }
+  }
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  task wrapper(type: Wrapper) { gradleVersion = '2.13' }
+
+  task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+  }
+
+  task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+  }
+
+  artifacts {
+    archives sourcesJar
+    archives javadocJar
+  }
+
+dependencies {
+  compile group: 'javax.transaction', name: 'javax.transaction-api', version: Versions.'javax.transaction-api'
+  compile group: 'org.postgresql', name: 'postgresql', version: Versions.'postgresql'
+  compile group: 'org.projectlombok', name: 'lombok', version: Versions.'lombok'
+  compile group: 'org.hibernate', name: 'hibernate-core', version: Versions.'hibernate'
+  compile group: 'org.hibernate', name: 'hibernate-c3p0', version: Versions.'hibernate'
+  compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: Versions.'hibernate'
+  compile group: 'org.hibernate', name: 'hibernate-envers', version: Versions.'hibernate'
+  compile group: 'org.hibernate', name: 'hibernate-validator', version: Versions.'hibernate-validator'
+  compile group: 'org.springframework.security', name: 'spring-security-core', version: Versions.'spring-security'
+  compile group: 'org.springframework.security', name: 'spring-security-web', version: Versions.'spring-security'
+  compile group: 'org.springframework.security', name: 'spring-security-config', version: Versions.'spring-security'
+  compile group: 'log4j', name: 'log4j', version: Versions.'log4j'
+  compile group: 'org.slf4j', name: 'slf4j-api', version: Versions.'slf4j'
+  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: Versions.'jackson'
+  compile group: 'org.apache.commons', name: 'commons-lang3', version: Versions.'commons-lang3'
+  compile group: 'org.springframework', name: 'spring-aop', version: Versions.'spring-framework'
+  compile group: 'org.springframework.data', name: 'spring-data-jpa', version: Versions.'spring-data-jpa'
+  compile group: 'org.springframework', name: 'spring-context', version: Versions.'spring-framework'
+  compile group: 'org.springframework', name: 'spring-orm', version: Versions.'spring-framework'
+  compile group: 'org.springframework', name: 'spring-webmvc', version: Versions.'spring-framework'
+  compile group: 'org.springframework', name: 'spring-tx', version: Versions.'spring-framework'
+  compile group: 'com.google.guava', name: 'guava', version: Versions.'guava'
+  compile group: 'com.google.code.findbugs', name:'findbugs', version : Versions.'findbugs'
+  compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: Versions.'akka'
+  compile group: 'com.typesafe.akka', name: 'akka-persistence_2.11', version: Versions.'akka'
+  compile group: 'com.typesafe.akka', name: 'akka-cluster_2.11', version: Versions.'akka'
+  compile group: 'com.typesafe.akka', name: 'akka-persistence-query-experimental_2.11', version: Versions.'akka'
+  compile group: 'com.typesafe.akka', name: 'akka-slf4j_2.11', version: Versions.'akka'
+  compile group: 'com.okumin', name: 'akka-persistence-sql-async_2.11', version: '0.3.1'
+  compile group: 'com.github.mauricio', name: 'mysql-async_2.11', version: '0.2.16'
+  compile group: 'javax.interceptor', name: 'javax.interceptor-api', version: '1.2'
+  compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.9'
+  compile group: 'javax.servlet', name: 'javax.servlet-api', version: Versions.'javax.servlet-api'
+  compile group: 'org.jolokia', name: 'jolokia-core', version: '1.3.5'
+  compile group: 'com.typesafe.akka', name: 'akka-cluster-tools_2.11', version: Versions.'akka'
+  compile group: 'com.typesafe.akka', name: 'akka-contrib_2.11', version: Versions.'akka'
+  compile group: 'com.github.dnvriend', name: 'akka-persistence-jdbc_2.11', version: '2.6.8'
+
+  // Test Dependency
+  testCompile group: 'com.github.dnvriend', name: 'akka-persistence-inmemory_2.11', version: Versions.'akka-inmemory'
+  testCompile group: 'org.springframework', name: 'spring-test', version: Versions.'spring-framework'
+  testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: Versions.'spring-boot' 
+  testCompile group: 'org.springframework.security', name: 'spring-security-test', version: Versions.'spring-security'
+  testCompile group: 'org.jbehave', name: 'jbehave-core', version: Versions.'jbehave'
+  testCompile group: 'org.jbehave', name: 'jbehave-spring', version: Versions.'jbehave'
+  testCompile group: 'com.jayway.jsonpath', name: 'json-path', version: Versions.'jsonpath'
+  testCompile group: 'junit', name: 'junit', version: Versions.'junit'
+  testCompile group: 'org.mockito', name: 'mockito-core', version: Versions.'mockito'
+  testCompile group: 'com.h2database', name: 'h2', version: Versions.'h2'
+  testCompile group: 'org.assertj', name: 'assertj-core', version: Versions.'assertj'
+  testCompile group: 'com.typesafe.akka', name: 'akka-testkit_2.11', version: Versions.'akka'
+  testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
+  testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+}
+
+defaultTasks 'clean', 'build', 'test'
