@@ -3,6 +3,7 @@ package net.chh.akka;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 
+import net.chh.akka.AkkaClusterMessengerConstants.PersistentId;
 import net.chh.akka.spring.SpringAkkaBase;
 
 import org.springframework.stereotype.Component;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Component;
 public class AkkaBaseImpl extends SpringAkkaBase {
 
   private final ActorSystem actorSystem;
+
+  private ActorRef clusterListener;
+  private ActorRef clusterMessagingReceiver;
 
   public AkkaBaseImpl() {
     actorSystem = ActorSystem.create("akka");
@@ -23,11 +27,24 @@ public class AkkaBaseImpl extends SpringAkkaBase {
 
   @Override
   public ActorRef getActor(String actorId) {
-    return getActor(actorSystem, actorId);
+    // @formatter:off
+    switch (actorId) {
+      case PersistentId.Cluster.Listener:
+        return clusterListener;
+      case PersistentId.Cluster.Receiver:
+        return clusterMessagingReceiver;
+      default:
+        return getActor(actorSystem, actorId);    
+    }
+    // @formatter:on
+
   }
 
   @Override
   public void initialize() {
+
+    clusterListener = getActor(actorSystem, PersistentId.Cluster.Listener);
+    clusterMessagingReceiver = getActor(actorSystem, PersistentId.Cluster.Receiver);
 
   }
 

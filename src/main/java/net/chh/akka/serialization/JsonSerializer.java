@@ -8,9 +8,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.chh.akka.AkkaClusterMessengerConstants;
 import net.chh.akka.AkkaClusterMessengerConstants.Message;
+import net.chh.akka.message.Acknowledgement;
 import net.chh.akka.message.AkkaEnvelope;
 import net.chh.akka.message.MessageEnvelopeImpl;
+import net.chh.akka.message.persist.AcknowledgementPersist;
 import net.chh.akka.message.persist.MessagePersist;
+import net.chh.akka.message.resend.GapFillMessage;
+import net.chh.akka.message.resend.ResendComplete;
+import net.chh.akka.message.resend.ResendRequest;
+import net.chh.akka.message.reset.ResetSequenceNumberRequest;
 
 import java.io.IOException;
 
@@ -35,6 +41,24 @@ public class JsonSerializer extends SerializerWithStringManifest {
         }
         case Message.MessagePersist: {
           return mapper.readValue(bytes, MessagePersist.class);
+        }
+        case Message.Acknowledgement: {
+          return mapper.readValue(bytes, Acknowledgement.class);
+        }
+        case Message.AcknowledgementPersist: {
+          return mapper.readValue(bytes, AcknowledgementPersist.class);
+        }
+        case Message.ResendComplete: {
+          return mapper.readValue(bytes, ResendComplete.class);
+        }
+        case Message.ResendRequest: {
+          return mapper.readValue(bytes, ResendRequest.class);
+        }
+        case Message.ResetSequenceNumberRequest: {
+          return mapper.readValue(bytes, ResetSequenceNumberRequest.class);
+        }
+        case Message.GapFillMessage: {
+          return mapper.readValue(bytes, GapFillMessage.class);
         }
         default: {
           throw new IllegalArgumentException("Unknown manifest: " + manifest);
