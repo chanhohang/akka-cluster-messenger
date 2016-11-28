@@ -16,7 +16,7 @@
     <context:property-placeholder location="classpath:jdbc-h2.properties"/>
 
     <context:annotation-config />
-    <context:component-scan base-package="net.chh.akka" /> 
+    <context:component-scan base-package="com.github.chanhohang.akka" /> 
 
     <!--h2 Datasource Config -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -46,7 +46,7 @@
         </property>
         <property name="packagesToScan">
             <list>
-                <value>net.chh.akka.entities.**</value>
+                <value>com.github.chanhohang.akka.entities.**</value>
             </list>
         </property>
     </bean>
@@ -58,5 +58,5 @@
     
     <tx:annotation-driven transaction-manager="transactionManager" />
     
-    <jpa:repositories base-package="net.chh.akka.repository" />
+    <jpa:repositories base-package="com.github.chanhohang.akka.repository" />
 </beans>
