@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-                            http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"
-       >
+                            http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
 
-    <!-- load H2 jdbc properties -->
-    <context:property-placeholder location="classpath:jdbc-h2.properties"/>
+	<!-- load H2 jdbc properties -->
+	<context:property-placeholder location="classpath:jdbc-h2.properties" />
 
-    <context:annotation-config />
-    <context:component-scan base-package="com.github.chanhohang.akka" /> 
+	<context:annotation-config />
+	<context:component-scan base-package="com.github.chanhohang.akka" />
 
-    <!--h2 Datasource Config -->
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.h2.Driver" />
-        <property name="url" value="${jdbc.url}" />
-        <property name="username" value="${jdbc.user}" />
-        <property name="password" value="${jdbc.password}" />
-    </bean> 
+	<!--h2 Datasource Config -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.h2.Driver" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
 
-    <bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean" >
-        <property name="ignoreResourceNotFound" value="true" />
-        <property name="properties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-                <prop key="hibernate.show_sql">false</prop>
-                <prop key="hibernate.hbm2ddl.auto">create</prop>
-                <prop key="hibernate.connection.characterEncoding">utf8</prop>
-            </props>
-        </property>
-    </bean>
+	<bean id="hibernateProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="properties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.connection.characterEncoding">utf8</prop>
+			</props>
+		</property>
+	</bean>
 
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <property name="jpaProperties" ref="hibernateProperties" />
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-        </property>
-        <property name="packagesToScan">
-            <list>
-                <value>com.github.chanhohang.akka.entities.**</value>
-            </list>
-        </property>
-    </bean>
-    
-    <bean class="org.springframework.orm.jpa.JpaTransactionManager"
-        id="transactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
-    
-    <tx:annotation-driven transaction-manager="transactionManager" />
-    
-    <jpa:repositories base-package="com.github.chanhohang.akka.repository" />
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="jpaProperties" ref="hibernateProperties" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="packagesToScan">
+			<list>
+				<value>com.github.chanhohang.akka.entities.**</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
+		id="transactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<jpa:repositories base-package="com.github.chanhohang.akka.repository" />
 </beans>

@@ -8,6 +8,7 @@ public interface AkkaClusterMessengerConstants {
     interface Cluster {
       String node = "cluster";
       String Receiver = node + "." + "receiver";
+      String Sender = node + "." + "sender";
       String Listener = node + "." + "listener";
     }
   }

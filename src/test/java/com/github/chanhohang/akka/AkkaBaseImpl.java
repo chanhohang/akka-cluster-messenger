@@ -15,6 +15,7 @@ public class AkkaBaseImpl extends SpringAkkaBase {
 
   private ActorRef clusterListener;
   private ActorRef clusterMessagingReceiver;
+  private ActorRef clusterMessagingSender;
 
   public AkkaBaseImpl() {
     actorSystem = ActorSystem.create("akka");
@@ -33,6 +34,8 @@ public class AkkaBaseImpl extends SpringAkkaBase {
         return clusterListener;
       case PersistentId.Cluster.Receiver:
         return clusterMessagingReceiver;
+      case PersistentId.Cluster.Sender:
+        return clusterMessagingSender;
       default:
         return getActor(actorSystem, actorId);    
     }
@@ -42,10 +45,9 @@ public class AkkaBaseImpl extends SpringAkkaBase {
 
   @Override
   public void initialize() {
-
     clusterListener = getActor(actorSystem, PersistentId.Cluster.Listener);
     clusterMessagingReceiver = getActor(actorSystem, PersistentId.Cluster.Receiver);
-
+    clusterMessagingSender = getActor(actorSystem, PersistentId.Cluster.Sender);
   }
 
 }

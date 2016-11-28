@@ -6,12 +6,14 @@ import com.github.chanhohang.akka.message.BaseMessageEnvelope;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class MessagePersist extends BaseMessageEnvelope<Object> {
 
   private static final long serialVersionUID = 1L;
