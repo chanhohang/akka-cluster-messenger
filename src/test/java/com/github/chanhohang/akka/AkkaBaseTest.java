@@ -41,24 +41,26 @@ public class AkkaBaseTest {
 
   @Test
   public void test() throws InterruptedException {
+
     assertThat(akkaBase).isNotNull();
     ActorRef receiver = akkaBase.getActor(PersistentId.Cluster.Receiver);
 
     assertNotNull(receiver);
     receiver.tell(MessageEnvelopeImpl.builder().deliveryId(1).build(), ActorRef.noSender());
 
-
     Member member = Mockito.mock(Member.class);
-    Mockito.when(member.getRoles()).thenReturn(Sets.newHashSet("TEST"));
-    Mockito.when(member.address()).thenReturn(Address.apply("akka.tcp", "127.0.0.1"));
+    Mockito.when(member.getRoles()).thenReturn(Sets.newHashSet("TEST2"));
+    Mockito.when(member.address())
+        .thenReturn(Address.apply("akka.tcp", "system", "127.0.0.1", 2552));
     Mockito.when(member.status()).thenReturn(MemberStatus.up());
     MemberUp up = new MemberUp(member);
 
     ActorRef listener = akkaBase.getActor(PersistentId.Cluster.Listener);
     listener.tell(up, ActorRef.noSender());
-    List<ActorSelection> actor = clusterStore.getActor("TEST", PersistentId.Cluster.Listener);
+
+    List<ActorSelection> actor = clusterStore.getActor("TEST2", PersistentId.Cluster.Receiver);
     assertThat(actor).isNotNull();
-    // assertThat(actor.size()).isEqualTo(1);
+    assertThat(actor.size()).isEqualTo(1);
 
   }
 

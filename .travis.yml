@@ -5,3 +5,7 @@ cache:
 language: java
 jdk:
   - oraclejdk8
+env:
+   global:
+   - ossrhUsername=yourname
+   - ossrhPassword=yourpassword

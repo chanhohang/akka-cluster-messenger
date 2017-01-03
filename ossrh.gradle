@@ -1,0 +1,51 @@
+apply from: "build.gradle"
+apply plugin: 'signing'
+
+signing {
+  sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+    	  authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+	  snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+	    authentication(userName: ossrhUsername, password: ossrhPassword)
+	  }
+
+	  pom.project {
+	    name 'akka-cluster-messneger_2.11'
+	    packaging 'jar'
+	    // optionally artifactId can be defined here
+	    description 'A application used in akka cluster messenging' 	      
+	    url 'https://github.com/chanhohang/akka-cluster-messenger'
+	
+	    scm {
+	      connection 'scm:git:https://github.com/chanhohang/akka-cluster-messenger.git'
+	      developerConnection 'scm:git:ssh://github.com/chanhohang/akka-cluster-messenger.git'
+	      url 'https://github.com/chanhohang/akka-cluster-messenger'
+	    }
+	
+	    licenses {
+	      license {
+	        name 'The Apache License, Version 2.0'
+	        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+	      }
+	    }
+	
+	    developers {
+	      developer {
+	        id 'chanhohang'
+	        name 'Ho Hang Chan'
+	        email 'chanhohang@gmail.com'
+	      }
+	    }
+	  }
+    }
+  }
+}

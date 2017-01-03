@@ -18,7 +18,7 @@ public class AkkaBaseImpl extends SpringAkkaBase {
   private ActorRef clusterMessagingSender;
 
   public AkkaBaseImpl() {
-    actorSystem = ActorSystem.create("akka");
+    actorSystem = ActorSystem.create("system");
   }
 
   @Override

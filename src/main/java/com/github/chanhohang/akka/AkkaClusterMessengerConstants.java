@@ -5,11 +5,13 @@ public interface AkkaClusterMessengerConstants {
   int Identifier = 689;
 
   interface PersistentId {
+    public static final String SEPARATOR = ".";
+    
     interface Cluster {
       String node = "cluster";
-      String Receiver = node + "." + "receiver";
-      String Sender = node + "." + "sender";
-      String Listener = node + "." + "listener";
+      String Receiver = node + SEPARATOR + "receiver";
+      String Sender = node + SEPARATOR + "sender";
+      String Listener = node + SEPARATOR + "listener";
     }
   }
 

@@ -1,6 +1,5 @@
 package com.github.chanhohang.akka.cluster;
 
-import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.cluster.ClusterEvent.MemberEvent;
 import akka.cluster.ClusterEvent.MemberRemoved;
@@ -17,15 +16,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import scala.concurrent.Future;
-import scala.concurrent.duration.FiniteDuration;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,15 +74,15 @@ public class ClusterStore implements IClusterStore {
 
   private void registerActor(Member member, String actorId,
       Map<Member, List<ActorSelection>> actorList) {
-    log.info("Start registering actor from {}", member);
-    ActorSelection actorSelection = actor.getContext()
-        .actorSelection(member.address().toString() + "/user/" + actorId);
+    log.info("Start registering actor from {}", member.address().toString() + "/user/" + actorId);
+    ActorSelection actorSelection =
+        actor.getContext().actorSelection(member.address().toString() + "/user/" + actorId);
     log.info("Registering {} from {}, roles {}", actorSelection, member, member.roles());
-    // Check the actor exists.
-    Future<ActorRef> result = actorSelection.resolveOne(FiniteDuration.create(5, TimeUnit.SECONDS));
-    if (result.value().get().orElse(null) != null) {
+    try {
       List<ActorSelection> list = getList(member, actorList);
       list.add(actorSelection);
+    } catch (Exception exception) {
+      log.info("Actor Registration failed. Reason : {}", exception.getMessage());
     }
   }
 
@@ -122,8 +117,8 @@ public class ClusterStore implements IClusterStore {
   public List<ActorSelection> getActor(String role, String actorId) {
 
     List<ActorSelection> result;
-    Stream<Entry<Member, List<ActorSelection>>> stream = clusterMessengerReceiver.entrySet()
-        .stream();
+    Stream<Entry<Member, List<ActorSelection>>> stream =
+        clusterMessengerReceiver.entrySet().stream();
     if (role != null) {
       stream = stream.filter(entry -> entry.getKey().getRoles().contains(role));
     }

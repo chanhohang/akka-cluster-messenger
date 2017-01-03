@@ -13,8 +13,8 @@ ext {
     'javax.transaction-api' : '1.2',
     'hibernate'             : '4.3.11.Final',
     'hibernate-validator'   : '5.2.1.Final',
-    'slf4j'                 : '1.7.16',
-    'log4j'                 : '1.2.16',
+    'slf4j'                 : '1.7.22',
+    'log4j'                 : '1.2.17',
     'commons-lang3'         : '3.3.2',
     'jackson'               : '2.4.4',
     'jsonpath'              : '0.8.1',
@@ -112,10 +112,11 @@ buildscript {
   }
 
   artifacts {
+	archives jar
     archives sourcesJar
     archives javadocJar
   }
-
+  
 dependencies {
   compile group: 'javax.transaction', name: 'javax.transaction-api', version: Versions.'javax.transaction-api'
   compile group: 'org.postgresql', name: 'postgresql', version: Versions.'postgresql'
@@ -168,8 +169,9 @@ dependencies {
   testCompile group: 'com.h2database', name: 'h2', version: Versions.'h2'
   testCompile group: 'org.assertj', name: 'assertj-core', version: Versions.'assertj'
   testCompile group: 'com.typesafe.akka', name: 'akka-testkit_2.11', version: Versions.'akka'
-  testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
-  testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+  testCompile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.22'
+  testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.22'
+  testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
 }
 
 defaultTasks 'clean', 'build', 'test'
